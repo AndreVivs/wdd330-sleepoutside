@@ -1,14 +1,5 @@
 import { getLocalStorage, setLocalStorage, qs } from "./utils.mjs";
 
-function renderCartContents() {
-  const cartItems = getLocalStorage("so-cart");
-  const htmlItems = cartItems.map((item) => cartItemTemplate(item));
-  document.querySelector(".product-list").innerHTML = htmlItems.join("");
-
-  const cartList = qs(".product-list");
-  cartList.addEventListener("click", removeFromCart);
-}
-
 function cartItemTemplate(item) {
   const newItem = `<li class="cart-card divider">
   <a href="#" class="cart-card__image">
@@ -29,6 +20,25 @@ function cartItemTemplate(item) {
   return newItem;
 }
 
+function renderCartContents() {
+  const cartItems = getLocalStorage("so-cart");
+  const htmlItems = cartItems.map((item) => cartItemTemplate(item));
+  document.querySelector(".product-list").innerHTML = htmlItems.join("");
+
+  const cartList = qs(".product-list");
+  const cartFooter = qs(".cart-footer");
+  const cartTotalElement = qs("#cartTotal");
+
+  if (cartItems.length > 0) {
+    cartFooter.classList.remove("hideTotal");
+    cartTotalElement.textContent = calculateCartTotal(cartItems);
+  } else {
+    cartFooter.classList.add("hideTotal");
+  }
+
+  cartList.addEventListener("click", removeFromCart);
+}
+
 renderCartContents();
 
 function removeFromCart(event) {
@@ -36,13 +46,16 @@ function removeFromCart(event) {
 
   const productId = event.target.dataset.id;
   let cartItems = getLocalStorage("so-cart") || [];
-
   // Filtrar para remover el producto seleccionado
   cartItems = cartItems.filter((item) => item.Id !== productId);
-
   // Actualizar el localStorage
   setLocalStorage("so-cart", cartItems);
 
-  // Volver a renderizar el carrito
   renderCartContents();
+}
+
+function calculateCartTotal(cartItems) {
+  return cartItems
+    .reduce((total, item) => total + item.FinalPrice, 0)
+    .toFixed(2);
 }
