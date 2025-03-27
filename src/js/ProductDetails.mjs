@@ -21,8 +21,27 @@ export default class ProductDetails {
 
   addProductToCart() {
     const cartItems = getLocalStorage("so-cart") || [];
-    cartItems.push(this.product);
+    const existingProductIndex = cartItems.findIndex(
+      (item) => item.Id === this.product.Id,
+    );
+
+    if (existingProductIndex !== -1) {
+      // If the product exist the quantity increast by 1
+      cartItems[existingProductIndex].quantity += 1;
+      alert(
+        `${this.product.Name} is al ready in your cart. We add one quantity more.`,
+      );
+      backpackInteraction();
+    } else {
+      // If the product doest't exist is added with quantity 1
+      const newProduct = { ...this.product, quantity: 1 };
+      cartItems.push(newProduct);
+      alert(`${this.product.Name} has been added.`);
+      backpackInteraction();
+    }
+
     setLocalStorage("so-cart", cartItems);
+    renderCartContents();
   }
 
   renderProductDetails() {
@@ -35,7 +54,6 @@ function productDetailsTemplate(product) {
     "Sleep Outside | " + product.Name;
   document.querySelector("h2").textContent = product.Brand.Name;
   document.querySelector("h3").textContent = product.NameWithoutBrand;
-  console.log(product);
   const productImage = document.getElementById("productImage");
   productImage.src = product.Image;
   productImage.alt = product.NameWithoutBrand;
@@ -48,6 +66,15 @@ function productDetailsTemplate(product) {
     product.DescriptionHtmlSimple;
 
   document.getElementById("addToCart").dataset.id = product.Id;
+}
+
+function backpackInteraction() {
+  const svg = document.getElementById("icon");
+  svg.classList.add("shake");
+
+  setTimeout(() => {
+    svg.classList.remove("shake");
+  }, 1000);
 }
 
 // ************* Alternative Display Product Details Method *******************

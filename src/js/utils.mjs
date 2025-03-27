@@ -37,7 +37,12 @@ export function renderListWithTemplate(
   clear = false,
 ) {
   const htmlStrings = list.map(template);
-  // if clear is true we need to clear out the contents of the parent.
+
+  if (!parentElement) {
+    console.error("Parent element is not defined!");
+    return;
+  }
+  // Clear the contents if needed
   if (clear) {
     parentElement.innerHTML = "";
   }
