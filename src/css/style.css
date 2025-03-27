@@ -111,7 +111,7 @@ button {
   fill: gray;
 }
 
-.shake{
+.shake {
   animation: shake 0.5s;
 }
 
@@ -130,7 +130,6 @@ button {
   line-height: 20px;
   display: none;
 } */
-
 
 @keyframes shake {
   0% {
@@ -261,7 +260,7 @@ button {
   grid-column: 2;
 }
 
-.cart-card__removeItem{
+.cart-card__removeItem {
   background-color: white;
 }
 
