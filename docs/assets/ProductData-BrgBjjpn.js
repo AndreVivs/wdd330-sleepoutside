@@ -1,0 +1,1 @@
+function s(o){if(o.ok)return o.json();throw new Error("Bad Response")}class r{constructor(t){this.category=t,this.path=`/json/${this.category}.json`}async getData(){return await fetch(this.path).then(s).then(t=>t)}async findProductById(t){return(await this.getData()).find(n=>n.Id===t)}}export{r as P};
