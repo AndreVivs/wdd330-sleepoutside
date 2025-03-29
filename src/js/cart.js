@@ -1,4 +1,11 @@
-import { getLocalStorage, setLocalStorage, qs } from "./utils.mjs";
+import {
+  getLocalStorage,
+  setLocalStorage,
+  qs,
+  loadHeaderFooter,
+} from "./utils.mjs";
+
+loadHeaderFooter();
 
 function cartItemTemplate(item) {
   //const newItem =

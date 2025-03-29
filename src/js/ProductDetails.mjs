@@ -1,4 +1,38 @@
-import { getLocalStorage, setLocalStorage } from "./utils.mjs";
+import {
+  getLocalStorage,
+  setLocalStorage,
+  loadHeaderFooter,
+} from "./utils.mjs";
+
+loadHeaderFooter();
+
+function productDetailsTemplate(product) {
+  document.querySelector("title").textContent =
+    "Sleep Outside | " + product.Name;
+  document.querySelector("h2").textContent = product.Brand.Name;
+  document.querySelector("h3").textContent = product.NameWithoutBrand;
+  const productImage = document.getElementById("productImage");
+  productImage.src = product.Image;
+  productImage.alt = product.NameWithoutBrand;
+
+  document.getElementById("productPrice").textContent =
+    "$" + product.FinalPrice;
+  document.getElementById("productColor").textContent =
+    product.Colors[0].ColorName;
+  document.getElementById("productDesc").innerHTML =
+    product.DescriptionHtmlSimple;
+
+  document.getElementById("addToCart").dataset.id = product.Id;
+}
+
+function backpackInteraction() {
+  const svg = document.getElementById("icon");
+  svg.classList.add("shake");
+
+  setTimeout(() => {
+    svg.classList.remove("shake");
+  }, 1000);
+}
 
 export default class ProductDetails {
   constructor(productId, dataSource) {
@@ -49,37 +83,10 @@ export default class ProductDetails {
   }
 }
 
-function productDetailsTemplate(product) {
-  document.querySelector("title").textContent =
-    "Sleep Outside | " + product.Name;
-  document.querySelector("h2").textContent = product.Brand.Name;
-  document.querySelector("h3").textContent = product.NameWithoutBrand;
-  const productImage = document.getElementById("productImage");
-  productImage.src = product.Image;
-  productImage.alt = product.NameWithoutBrand;
-
-  document.getElementById("productPrice").textContent =
-    "$" + product.FinalPrice;
-  document.getElementById("productColor").textContent =
-    product.Colors[0].ColorName;
-  document.getElementById("productDesc").innerHTML =
-    product.DescriptionHtmlSimple;
-
-  document.getElementById("addToCart").dataset.id = product.Id;
-}
-
-function backpackInteraction() {
-  const svg = document.getElementById("icon");
-  svg.classList.add("shake");
-
-  setTimeout(() => {
-    svg.classList.remove("shake");
-  }, 1000);
-}
-
-// ************* Alternative Display Product Details Method *******************
+//************* Alternative Display Product Details Method *******************/
 // function productDetailsTemplate(product) {
-//   return `<section class="product-detail"> <h3>${product.Brand.Name}</h3>
+//   return `<section class="product-detail">
+//   <h3>${product.Brand.Name}</h3>
 //     <h2 class="divider">${product.NameWithoutBrand}</h2>
 //     <img
 //       class="divider"
