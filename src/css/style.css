@@ -327,6 +327,22 @@ button {
   height: auto;
 }
 
+.header__cart-count {
+  background-color: red;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
 @media screen and (min-width: 500px) {
   body {
     max-width: 1080px;

@@ -1,7 +1,11 @@
-import { loadHeaderFooter } from "./utils.mjs";
+import { loadHeaderFooter, updateCartCount } from "./utils.mjs";
 import ShoppingCart from "./ShoppingCart.mjs";
 
-loadHeaderFooter();
+document.addEventListener("DOMContentLoaded", () => {
+  loadHeaderFooter().then(() => {
+    updateCartCount();
+  });
+});
 
 const cart = new ShoppingCart(".product-list", ".cart-footer", "#cartTotal");
 cart.init();

@@ -28,10 +28,10 @@ export default class ProductList {
   }
 
   renderList(list) {
-    if (!this.listElement) {
-      console.error("List element is not defined!");
-      return;
-    }
+    // if (!this.listElement) {
+    //   console.error("List element is not defined!");
+    //   return;
+    // }
 
     renderListWithTemplate(productCardTemplate, this.listElement, list);
   }
