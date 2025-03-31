@@ -72,3 +72,28 @@ export async function loadHeaderFooter() {
   renderWithTemplate(headerTemplate, headerElement);
   renderWithTemplate(footerTemplate, footerElement);
 }
+
+function calculateCartTotal(cartItems) {
+  return cartItems
+    .reduce((total, item) => total + item.FinalPrice * item.quantity, 0)
+    .toFixed(2);
+}
+
+export function renderCartContents() {
+  const cartItems = getLocalStorage("so-cart") || [];
+  const cartList = qs(".product-list");
+  const cartFooter = qs(".cart-footer");
+  const cartTotalElement = qs("#cartTotal");
+
+  cartList.innerHTML = cartItems.map(cartItemTemplate).join("");
+
+  if (cartItems.length > 0) {
+    cartFooter.classList.remove("hideTotal");
+    cartTotalElement.textContent = `$${calculateCartTotal(cartItems)}`;
+  } else {
+    cartFooter.classList.add("hideTotal");
+  }
+
+  cartList.addEventListener("click", updateQuantity); // Evento para + y -
+  cartList.addEventListener("click", removeFromCart); // Evento para eliminar
+}
