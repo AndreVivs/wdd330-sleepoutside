@@ -53,8 +53,8 @@ header {
 .hero .logo {
   position: absolute;
   left: calc(50% - 60px);
-  bottom: -10px;
   background-color: white;
+  top: 60%;
 }
 .logo--square {
   font-size: var(--small-font);
@@ -301,6 +301,30 @@ button {
 
 .hideTotal {
   display: none;
+}
+
+.product-grid {
+  display: flex;
+  padding: 0;
+  justify-content: space-between;
+}
+
+.product-grid li {
+  list-style-type: none;
+}
+
+.product-grid li a {
+  text-decoration: none;
+  color: var(--dark-grey);
+}
+
+.category__title {
+  text-align: center;
+}
+
+.category__image {
+  width: 200px;
+  height: auto;
 }
 
 @media screen and (min-width: 500px) {

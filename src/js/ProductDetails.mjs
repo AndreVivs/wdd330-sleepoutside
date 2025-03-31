@@ -1,38 +1,4 @@
-import {
-  getLocalStorage,
-  setLocalStorage,
-  loadHeaderFooter,
-} from "./utils.mjs";
-
-loadHeaderFooter();
-
-function productDetailsTemplate(product) {
-  document.querySelector("title").textContent =
-    "Sleep Outside | " + product.Name;
-  document.querySelector("h2").textContent = product.Brand.Name;
-  document.querySelector("h3").textContent = product.NameWithoutBrand;
-  const productImage = document.getElementById("productImage");
-  productImage.src = product.Image;
-  productImage.alt = product.NameWithoutBrand;
-
-  document.getElementById("productPrice").textContent =
-    "$" + product.FinalPrice;
-  document.getElementById("productColor").textContent =
-    product.Colors[0].ColorName;
-  document.getElementById("productDesc").innerHTML =
-    product.DescriptionHtmlSimple;
-
-  document.getElementById("addToCart").dataset.id = product.Id;
-}
-
-function backpackInteraction() {
-  const svg = document.getElementById("icon");
-  svg.classList.add("shake");
-
-  setTimeout(() => {
-    svg.classList.remove("shake");
-  }, 1000);
-}
+import { getLocalStorage, setLocalStorage } from "./utils.mjs";
 
 export default class ProductDetails {
   constructor(productId, dataSource) {
@@ -42,15 +8,21 @@ export default class ProductDetails {
   }
 
   async init() {
-    // use the datasource to get the details for the current product. findProductById will return a promise! use await or .then() to process it
-    this.product = await this.dataSource.findProductById(this.productId);
-    // the product details are needed before rendering the HTML
+    const response = await this.dataSource.findProductById(this.productId);
+    this.product = response?.Result || {}; // Extrae la propiedad Result
+
     this.renderProductDetails();
     // once the HTML is rendered, add a listener to the Add to Cart button
     // Notice the .bind(this). This callback will not work if the bind(this) is missing. Review the readings from this week on 'this' to understand why.
-    document
-      .getElementById("addToCart")
-      .addEventListener("click", this.addProductToCart.bind(this));
+    const addToCartButton = document.getElementById("add-to-cart"); // Asegurar el ID correcto
+    if (addToCartButton) {
+      addToCartButton.addEventListener(
+        "click",
+        this.addProductToCart.bind(this),
+      );
+    } else {
+      console.error("Error: Botton doesn't finded on DOM.");
+    }
   }
 
   addProductToCart() {
@@ -62,15 +34,15 @@ export default class ProductDetails {
     if (existingProductIndex !== -1) {
       // If the product exist the quantity increast by 1
       cartItems[existingProductIndex].quantity += 1;
-      alert(
-        `${this.product.Name} is al ready in your cart. We add one quantity more.`,
-      );
+      // alert(
+      //   `${this.product.Name} is al ready in your cart. We add one quantity more.`,
+      // );
       backpackInteraction();
     } else {
       // If the product doest't exist is added with quantity 1
       const newProduct = { ...this.product, quantity: 1 };
       cartItems.push(newProduct);
-      alert(`${this.product.Name} has been added.`);
+      ///alert(`${this.product.Name} has been added.`);
       backpackInteraction();
     }
 
@@ -81,6 +53,41 @@ export default class ProductDetails {
   renderProductDetails() {
     productDetailsTemplate(this.product);
   }
+}
+
+function productDetailsTemplate(product) {
+  if (!product || !product.Category) {
+    console.error("Error: Producto no válido", product);
+    return;
+  }
+  document.querySelector("h2").textContent =
+    product.Category.charAt(0).toUpperCase() + product.Category.slice(1);
+  document.querySelector("#p-brand").textContent = product.Brand.Name;
+  document.querySelector("#p-name").textContent = product.NameWithoutBrand;
+
+  const productImage = document.querySelector("#p-image");
+  productImage.src = product.Images.PrimaryLarge;
+  productImage.alt = product.NameWithoutBrand;
+  const taxes = 1.0725;
+  const price = new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "USD",
+  }).format(Number(product.FinalPrice) /* * taxes*/);
+  document.querySelector("#p-price").textContent = `${price}`;
+  document.querySelector("#p-color").textContent = product.Colors[0].ColorName;
+  document.querySelector("#p-description").innerHTML =
+    product.DescriptionHtmlSimple;
+
+  document.querySelector("#add-to-cart").dataset.id = product.Id;
+}
+
+function backpackInteraction() {
+  const svg = document.getElementById("icon");
+  svg.classList.add("shake");
+
+  setTimeout(() => {
+    svg.classList.remove("shake");
+  }, 1000);
 }
 
 //************* Alternative Display Product Details Method *******************/
