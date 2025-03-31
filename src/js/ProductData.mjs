@@ -9,13 +9,24 @@ function convertToJson(res) {
 export default class ProductData {
   constructor(category) {
     this.category = category;
-    this.path = `../json/${this.category}.json`;
+    this.path = `/json/${this.category}.json`;
   }
-  getData() {
-    return fetch(this.path)
+  // async getData() {
+  //   try {
+  //     const response = await fetch(this.path);
+  //     const data = await response.json();
+  //     return data;
+  //   } catch (error) {
+  //     console.error("Error fetching product data:", error);
+  //     return [];
+  //   }
+  // }
+  async getData() {
+    return await fetch(this.path)
       .then(convertToJson)
       .then((data) => data);
   }
+
   async findProductById(id) {
     const products = await this.getData();
     return products.find((item) => item.Id === id);

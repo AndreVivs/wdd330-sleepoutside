@@ -1,4 +1,38 @@
-import { getLocalStorage, setLocalStorage } from "./utils.mjs";
+import {
+  getLocalStorage,
+  setLocalStorage,
+  loadHeaderFooter,
+} from "./utils.mjs";
+
+loadHeaderFooter();
+
+function productDetailsTemplate(product) {
+  document.querySelector("title").textContent =
+    "Sleep Outside | " + product.Name;
+  document.querySelector("h2").textContent = product.Brand.Name;
+  document.querySelector("h3").textContent = product.NameWithoutBrand;
+  const productImage = document.getElementById("productImage");
+  productImage.src = product.Image;
+  productImage.alt = product.NameWithoutBrand;
+
+  document.getElementById("productPrice").textContent =
+    "$" + product.FinalPrice;
+  document.getElementById("productColor").textContent =
+    product.Colors[0].ColorName;
+  document.getElementById("productDesc").innerHTML =
+    product.DescriptionHtmlSimple;
+
+  document.getElementById("addToCart").dataset.id = product.Id;
+}
+
+function backpackInteraction() {
+  const svg = document.getElementById("icon");
+  svg.classList.add("shake");
+
+  setTimeout(() => {
+    svg.classList.remove("shake");
+  }, 1000);
+}
 
 export default class ProductDetails {
   constructor(productId, dataSource) {
@@ -21,8 +55,27 @@ export default class ProductDetails {
 
   addProductToCart() {
     const cartItems = getLocalStorage("so-cart") || [];
-    cartItems.push(this.product);
+    const existingProductIndex = cartItems.findIndex(
+      (item) => item.Id === this.product.Id,
+    );
+
+    if (existingProductIndex !== -1) {
+      // If the product exist the quantity increast by 1
+      cartItems[existingProductIndex].quantity += 1;
+      alert(
+        `${this.product.Name} is al ready in your cart. We add one quantity more.`,
+      );
+      backpackInteraction();
+    } else {
+      // If the product doest't exist is added with quantity 1
+      const newProduct = { ...this.product, quantity: 1 };
+      cartItems.push(newProduct);
+      alert(`${this.product.Name} has been added.`);
+      backpackInteraction();
+    }
+
     setLocalStorage("so-cart", cartItems);
+    renderCartContents();
   }
 
   renderProductDetails() {
@@ -30,29 +83,10 @@ export default class ProductDetails {
   }
 }
 
-function productDetailsTemplate(product) {
-  document.querySelector("title").textContent =
-    "Sleep Outside | " + product.Name;
-  document.querySelector("h2").textContent = product.Brand.Name;
-  document.querySelector("h3").textContent = product.NameWithoutBrand;
-  console.log(product);
-  const productImage = document.getElementById("productImage");
-  productImage.src = product.Image;
-  productImage.alt = product.NameWithoutBrand;
-
-  document.getElementById("productPrice").textContent =
-    "$" + product.FinalPrice;
-  document.getElementById("productColor").textContent =
-    product.Colors[0].ColorName;
-  document.getElementById("productDesc").innerHTML =
-    product.DescriptionHtmlSimple;
-
-  document.getElementById("addToCart").dataset.id = product.Id;
-}
-
-// ************* Alternative Display Product Details Method *******************
+//************* Alternative Display Product Details Method *******************/
 // function productDetailsTemplate(product) {
-//   return `<section class="product-detail"> <h3>${product.Brand.Name}</h3>
+//   return `<section class="product-detail">
+//   <h3>${product.Brand.Name}</h3>
 //     <h2 class="divider">${product.NameWithoutBrand}</h2>
 //     <img
 //       class="divider"
