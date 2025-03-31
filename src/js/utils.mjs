@@ -38,10 +38,10 @@ export function renderListWithTemplate(
 ) {
   const htmlStrings = list.map(template);
 
-  if (!parentElement) {
-    console.error("Parent element is not defined!");
-    return;
-  }
+  // if (!parentElement) {
+  //   console.error("Parent element is not defined!");
+  //   return;
+  // }
   // Clear the contents if needed
   if (clear) {
     parentElement.innerHTML = "";
@@ -96,4 +96,18 @@ export function renderCartContents() {
 
   cartList.addEventListener("click", updateQuantity); // Evento para + y -
   cartList.addEventListener("click", removeFromCart); // Evento para eliminar
+}
+
+export function updateCartCount() {
+  const cartItems = getLocalStorage("so-cart") || [];
+  const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const cartCountElement = document.querySelector(".header__cart-count");
+
+  // if (!cartCountElement) {
+  //   console.warn("Elemento .header__cart-count no encontrado en el DOM");
+  //   return;
+  // }
+
+  cartCountElement.textContent = itemCount;
+  cartCountElement.style.display = itemCount > 0 ? "inline" : "none";
 }

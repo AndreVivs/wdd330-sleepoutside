@@ -3,6 +3,7 @@ import {
   setLocalStorage,
   qs,
   renderListWithTemplate,
+  updateCartCount,
 } from "./utils.mjs";
 
 function cartItemTemplate(item) {
@@ -36,6 +37,7 @@ export default class ShoppingCart {
     this.cartElement.addEventListener("click", (event) =>
       this.handleCartActions(event),
     );
+    updateCartCount();
   }
 
   renderCartContents() {
@@ -72,6 +74,7 @@ export default class ShoppingCart {
     cartItems = cartItems.filter((item) => item.Id !== productId);
     setLocalStorage("so-cart", cartItems);
     this.renderCartContents();
+    updateCartCount();
   }
 
   updateQuantity(button) {
@@ -92,6 +95,7 @@ export default class ShoppingCart {
 
     setLocalStorage("so-cart", cartItems);
     this.renderCartContents();
+    updateCartCount();
   }
 
   calculateCartTotal(cartItems) {
