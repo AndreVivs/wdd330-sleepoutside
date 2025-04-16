@@ -1,11 +1,16 @@
 const baseURL = import.meta.env.VITE_SERVER_URL;
 const URL = import.meta.env.VITE_CHECKOUT_URL;
 
-function convertToJson(res) {
+async function convertToJson(res) {
+  const jsonResponse = await res.json(); // get the body no matter what
+
   if (res.ok) {
-    return res.json();
+    return jsonResponse;
   } else {
-    throw new Error("Bad Response");
+    throw {
+      name: "servicesError",
+      message: jsonResponse,
+    };
   }
 }
 
@@ -40,10 +45,6 @@ export default class ExternalServices {
     };
     console.log("Sending order to backend:", order);
     const response = await fetch(url, options);
-    if (!response.ok) {
-      throw new Error("Failed to submit order");
-    }
-
-    return await response.json();
+    return await convertToJson(response);
   }
 }

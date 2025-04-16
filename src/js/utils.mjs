@@ -37,12 +37,6 @@ export function renderListWithTemplate(
   clear = false,
 ) {
   const htmlStrings = list.map(template);
-
-  // if (!parentElement) {
-  //   console.error("Parent element is not defined!");
-  //   return;
-  // }
-  // Clear the contents if needed
   if (clear) {
     parentElement.innerHTML = "";
   }
@@ -110,4 +104,29 @@ export function updateCartCount() {
 
   cartCountElement.textContent = itemCount;
   cartCountElement.style.display = itemCount > 0 ? "inline" : "none";
+}
+
+// utils.mjs
+export function alertMessage(message, scroll = true) {
+  const alert = document.createElement("div");
+  alert.classList.add("alert");
+
+  alert.innerHTML = `
+    <p>${message}</p>
+    <button class="close-alert" aria-label="Close alert">&times;</button>
+  `;
+
+  alert.addEventListener("click", function (e) {
+    if (e.target.classList.contains("close-alert")) {
+      alert.remove();
+    }
+  });
+
+  const main = document.querySelector("main");
+  // Remove existing alert if any
+  const existing = main.querySelector(".alert");
+  if (existing) existing.remove();
+  main.prepend(alert);
+
+  if (scroll) window.scrollTo({ top: 0, behavior: "smooth" });
 }

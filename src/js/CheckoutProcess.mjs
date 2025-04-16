@@ -1,5 +1,6 @@
 import { getLocalStorage } from "./utils.mjs";
 import ExternalServices from "./ExternalServices.mjs";
+import { alertMessage } from "./utils.mjs";
 
 function packageItems(items) {
   return items.map((item) => ({
@@ -28,8 +29,6 @@ export default class CheckoutProcess {
     this.shipping = 0;
     this.tax = 0;
     this.orderTotal = 0;
-    // this.expiration = 0;
-    // this.code = 0;
   }
 
   init() {
@@ -37,7 +36,7 @@ export default class CheckoutProcess {
     this.list = packageItems(rawList);
     this.calculateItemSummary();
     this.calculateOrderTotal();
-    this.initFormHandler();
+    // this.initFormHandler();
   }
 
   calculateItemSummary() {
@@ -75,41 +74,66 @@ export default class CheckoutProcess {
     `;
   }
 
-  initFormHandler() {
-    const form = document.querySelector("#checkout-form");
-    if (form) {
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
+  // initFormHandler() {
+  //   const form = document.querySelector("#checkout-form");
+  //   const summaryContainer = document.querySelector("#order-summary");
 
-        try {
-          const result = await this.checkout(form);
-          alert("Order submitted successfully!");
+  //   if (form) {
+  //     form.addEventListener("submit", async (e) => {
+  //       e.preventDefault();
 
-          // limpiar carrito y formulario
-          localStorage.removeItem(this.key);
-          form.reset();
-          document.querySelector("#order-summary").innerHTML =
-            "<p>Thank you for your purchase!</p>";
-        } catch (error) {
-          console.error("Checkout failed:", error);
-          alert("There was a problem submitting your order.");
-        }
-      });
-    }
-  }
+  //       // Validar campos vacíos
+  //       const requiredFields = form.querySelectorAll("input[required]");
+  //       const emptyFields = Array.from(requiredFields).filter(
+  //         (field) => !field.value.trim(),
+  //       );
+
+  //       const itemTotal = this.itemTotal;
+  //       const tax = this.tax;
+  //       const shipping = this.shipping;
+  //       const orderTotal = this.orderTotal;
+
+  //       const summaryInvalid =
+  //         itemTotal <= 0 || tax <= 0 || shipping <= 0 || orderTotal <= 0;
+
+  //       if (emptyFields.length > 0 || summaryInvalid) {
+  //         const messages = [];
+
+  //         if (emptyFields.length > 0) {
+  //           messages.push("Please fill in all required fields.");
+  //         }
+
+  //         if (summaryInvalid) {
+  //           messages.push("Invalid order summary. Please check your cart.");
+  //         }
+
+  //         console.log("Error messages:", messages);
+  //         this.displayCheckoutError(messages);
+  //         return; // No continuar con el envío
+  //       }
+
+  //       try {
+  //         const result = await this.checkout(form);
+  //         if (result) {
+  //           localStorage.removeItem(this.key);
+  //           form.reset();
+  //           summaryContainer.innerHTML = "";
+  //           this.displayCheckoutError("");
+  //           window.location.href = "./success.html";
+  //         }
+  //       } catch (error) {
+  //         console.error("Checkout failed:", error);
+  //         alert("There was a problem submitting your order.");
+  //       }
+  //     });
+  //   }
+  // }
 
   async checkout(form) {
     const order = formDataToJSON(form);
 
-    // Extraer los valores de 'expiration' y 'code' desde el formulario
     order.expiration = form.querySelector("#expiration").value;
     order.code = form.querySelector("#code").value;
-
-    // Asegúrate de que estos valores sean correctos
-    console.log("Expiration:", order.expiration);
-    console.log("CVV:", order.code);
-
-    // Otros campos de la orden
     order.orderDate = new Date().toISOString();
     order.orderTotal = this.orderTotal.toFixed(2);
     order.tax = this.tax;
@@ -121,7 +145,46 @@ export default class CheckoutProcess {
       JSON.stringify(order, null, 2),
     );
 
-    const service = new ExternalServices();
-    return await service.submitOrder(order);
+    try {
+      const service = new ExternalServices();
+      const confirmation = await service.submitOrder(order);
+      console.log("Order confirmation:", confirmation);
+      return true;
+    } catch (error) {
+      console.error("Error during checkout:", error);
+      if (error.name === "servicesError") {
+        const errorMessages = Object.values(error.message); // Extrae todos los mensajes
+        this.displayCheckoutError(errorMessages);
+        alertMessage(
+          "There was a problem with your order. Please check the errors below.",
+        );
+      } else {
+        this.displayCheckoutError([
+          "Unknown error occurred. Please try again.",
+        ]);
+        alertMessage("Unexpected error. Please try again.");
+      }
+      return false;
+    }
+  }
+
+  displayCheckoutError(errorMessages) {
+    const errorBox = document.getElementById("checkoutError");
+    errorBox.innerHTML = "";
+
+    if (Array.isArray(errorMessages)) {
+      const ul = document.createElement("ul");
+      errorMessages.forEach((msg) => {
+        const li = document.createElement("li");
+        li.innerText = msg;
+        ul.appendChild(li);
+      });
+      errorBox.appendChild(ul);
+    } else {
+      errorBox.innerText = errorMessages || "An error occurred.";
+    }
+
+    errorBox.style.display = "block";
+    errorBox.style.color = "red";
   }
 }
