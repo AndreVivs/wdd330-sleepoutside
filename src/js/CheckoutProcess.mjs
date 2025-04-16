@@ -121,23 +121,34 @@ export default class CheckoutProcess {
     } catch (error) {
       console.error("Error during checkout:", error);
       if (error.name === "servicesError") {
-        const firstKey = Object.keys(error.message)[0];
-        console.log("First key:", firstKey); //
-        const errorMessage = error.message[firstKey]; // Access the value of the first key
-
-        console.log("Error message:", errorMessage);
-        this.displayCheckoutError(errorMessage);
+        const errorMessages = Object.values(error.message); // Extrae todos los mensajes
+        console.log("Error messages:", errorMessages);
+        this.displayCheckoutError(errorMessages);
       } else {
-        this.displayCheckoutError({
-          message: "Unknown error occurred. Please try again.",
-        });
+        this.displayCheckoutError([
+          "Unknown error occurred. Please try again.",
+        ]);
       }
+      throw error;
     }
   }
 
-  displayCheckoutError(errorMessage) {
-    let errorBox = document.getElementById("checkoutError"); // or wherever you're showing errors
-    errorBox.innerText = errorMessage || "An error occurred.";
+  displayCheckoutError(errorMessages) {
+    const errorBox = document.getElementById("checkoutError");
+    errorBox.innerHTML = "";
+
+    if (Array.isArray(errorMessages)) {
+      const ul = document.createElement("ul");
+      errorMessages.forEach((msg) => {
+        const li = document.createElement("li");
+        li.innerText = msg;
+        ul.appendChild(li);
+      });
+      errorBox.appendChild(ul);
+    } else {
+      errorBox.innerText = errorMessages || "An error occurred.";
+    }
+
     errorBox.style.display = "block";
     errorBox.style.color = "red";
   }
