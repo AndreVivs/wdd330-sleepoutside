@@ -361,3 +361,50 @@ footer {
   font-size: var(--small-font);
   padding: 1em;
 }
+
+/* Checkout Form */
+.checkout-form {
+  max-width: 600px;
+  margin: 2em auto;
+  padding: 1.5em;
+  border: 1px solid var(--light-grey);
+  border-radius: 8px;
+  background-color: #ffcda1;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.checkout-form fieldset {
+  background-color: white;
+  margin-bottom: 20px;
+}
+
+.checkout-form label {
+  display: block;
+  font-weight: bold;
+  margin-top: 1em;
+  margin-bottom: 0.3em;
+}
+
+.checkout-form input[type="text"],
+.checkout-form input[type="email"],
+.checkout-form input[type="number"] {
+  width: 100%;
+  padding: 0.6em;
+  font-size: 1em;
+  border: 1px solid var(--light-grey);
+  border-radius: 4px;
+}
+
+.checkout-form input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(240, 168, 104, 0.2);
+}
+
+.checkout-form .form-group {
+  margin-bottom: 1em;
+}
+
+a {
+  text-decoration: none;
+}

@@ -1,5 +1,5 @@
 import { loadHeaderFooter, updateCartCount } from "./utils.mjs";
-import ProductData from "./ProductData.mjs";
+import ExternalServices from "./ExternalServices.mjs";
 import ProductList from "./ProductList.mjs";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-const dataSource = new ProductData("tents");
+const dataSource = new ExternalServices("tents");
 const element = document.querySelector(".product-list");
 const productList = new ProductList("Tents", dataSource, element);
 

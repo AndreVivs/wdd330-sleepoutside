@@ -1,4 +1,5 @@
 const baseURL = import.meta.env.VITE_SERVER_URL;
+const URL = import.meta.env.VITE_CHECKOUT_URL;
 
 function convertToJson(res) {
   if (res.ok) {
@@ -8,12 +9,7 @@ function convertToJson(res) {
   }
 }
 
-export default class ProductData {
-  constructor(category) {
-    // this.category = category;
-    // this.path = `/json/${this.category}.json`;
-  }
-
+export default class ExternalServices {
   async getData(category) {
     const response = await fetch(`${baseURL}products/search/${category} `);
     const data = await convertToJson(response);
@@ -31,5 +27,23 @@ export default class ProductData {
       console.error("Failed to fetch product details:", error);
       return null;
     }
+  }
+
+  async submitOrder(order) {
+    const url = `${URL}`;
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(order),
+    };
+    console.log("Sending order to backend:", order);
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error("Failed to submit order");
+    }
+
+    return await response.json();
   }
 }
