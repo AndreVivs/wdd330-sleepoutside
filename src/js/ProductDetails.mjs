@@ -1,4 +1,5 @@
 import { getLocalStorage, setLocalStorage, updateCartCount } from "./utils.mjs";
+import { alertMessage } from "./utils.mjs";
 
 export default class ProductDetails {
   constructor(productId, dataSource) {
@@ -34,14 +35,15 @@ export default class ProductDetails {
     if (existingProductIndex !== -1) {
       // If the product exist the quantity increast by 1
       cartItems[existingProductIndex].quantity += 1;
-      // alert(
-      //   `${this.product.Name} is al ready in your cart. We add one quantity more.`,
-      // );
+      alertMessage("One more added!");
+
       backpackInteraction();
     } else {
       // If the product doest't exist is added with quantity 1
       const newProduct = { ...this.product, quantity: 1 };
       cartItems.push(newProduct);
+      alertMessage("Item added to your cart!");
+
       ///alert(`${this.product.Name} has been added.`);
       backpackInteraction();
     }

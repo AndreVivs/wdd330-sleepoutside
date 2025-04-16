@@ -111,3 +111,28 @@ export function updateCartCount() {
   cartCountElement.textContent = itemCount;
   cartCountElement.style.display = itemCount > 0 ? "inline" : "none";
 }
+
+// utils.mjs
+export function alertMessage(message, scroll = true) {
+  const alert = document.createElement("div");
+  alert.classList.add("alert");
+
+  alert.innerHTML = `
+    <p>${message}</p>
+    <button class="close-alert" aria-label="Close alert">&times;</button>
+  `;
+
+  alert.addEventListener("click", function (e) {
+    if (e.target.classList.contains("close-alert")) {
+      alert.remove();
+    }
+  });
+
+  const main = document.querySelector("main");
+  // Remove existing alert if any
+  const existing = main.querySelector(".alert");
+  if (existing) existing.remove();
+  main.prepend(alert);
+
+  if (scroll) window.scrollTo({ top: 0, behavior: "smooth" });
+}

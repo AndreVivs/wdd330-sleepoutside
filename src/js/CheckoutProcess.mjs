@@ -1,5 +1,6 @@
 import { getLocalStorage } from "./utils.mjs";
 import ExternalServices from "./ExternalServices.mjs";
+import { alertMessage } from "./utils.mjs";
 
 function packageItems(items) {
   return items.map((item) => ({
@@ -154,10 +155,14 @@ export default class CheckoutProcess {
       if (error.name === "servicesError") {
         const errorMessages = Object.values(error.message); // Extrae todos los mensajes
         this.displayCheckoutError(errorMessages);
+        alertMessage(
+          "There was a problem with your order. Please check the errors below.",
+        );
       } else {
         this.displayCheckoutError([
           "Unknown error occurred. Please try again.",
         ]);
+        alertMessage("Unexpected error. Please try again.");
       }
       return false;
     }
