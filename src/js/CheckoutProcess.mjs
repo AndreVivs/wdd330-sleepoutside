@@ -101,15 +101,8 @@ export default class CheckoutProcess {
   async checkout(form) {
     const order = formDataToJSON(form);
 
-    // Extraer los valores de 'expiration' y 'code' desde el formulario
     order.expiration = form.querySelector("#expiration").value;
     order.code = form.querySelector("#code").value;
-
-    // Asegúrate de que estos valores sean correctos
-    console.log("Expiration:", order.expiration);
-    console.log("CVV:", order.code);
-
-    // Otros campos de la orden
     order.orderDate = new Date().toISOString();
     order.orderTotal = this.orderTotal.toFixed(2);
     order.tax = this.tax;
@@ -121,7 +114,31 @@ export default class CheckoutProcess {
       JSON.stringify(order, null, 2),
     );
 
-    const service = new ExternalServices();
-    return await service.submitOrder(order);
+    try {
+      const service = new ExternalServices();
+      const confirmation = await service.submitOrder(order);
+      console.log("Order confirmation:", confirmation);
+    } catch (error) {
+      console.error("Error during checkout:", error);
+      if (error.name === "servicesError") {
+        const firstKey = Object.keys(error.message)[0];
+        console.log("First key:", firstKey); //
+        const errorMessage = error.message[firstKey]; // Access the value of the first key
+
+        console.log("Error message:", errorMessage);
+        this.displayCheckoutError(errorMessage);
+      } else {
+        this.displayCheckoutError({
+          message: "Unknown error occurred. Please try again.",
+        });
+      }
+    }
+  }
+
+  displayCheckoutError(errorMessage) {
+    let errorBox = document.getElementById("checkoutError"); // or wherever you're showing errors
+    errorBox.innerText = errorMessage || "An error occurred.";
+    errorBox.style.display = "block";
+    errorBox.style.color = "red";
   }
 }
