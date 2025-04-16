@@ -37,7 +37,14 @@
               <label for="state">State</label>
               <input type="text" name="state" id="state" required />
               <label for="zip">Zip</label>
-              <input type="text" name="zip" id="zip" required />
+              <input
+                type="text"
+                name="zip"
+                id="zip"
+                required
+                pattern="^\d{5}$"
+                title="Enter a 5-digit ZIP code"
+              />
             </div>
           </fieldset>
 
@@ -46,11 +53,35 @@
             <span>Payment Information</span>
             <div class="checkout__payment">
               <label for="cardNumber">Card Number</label>
-              <input type="text" name="cardNumber" id="cardNumber" required />
+              <input
+                type="text"
+                name="cardNumber"
+                id="cardNumber"
+                required
+                pattern="^\d{16}$"
+                title="Enter a 16-digit card number"
+                required
+              />
               <label for="expiration">Expiration</label>
-              <input type="text" name="expiration" id="expiration" required />
+              <input
+                type="text"
+                name="expiration"
+                id="expiration"
+                required
+                pattern="(0[1-9]|1[0-2])\/\d{2}"
+                title="Expiration must be in MM/YY format"
+                required
+              />
               <label for="code">CVV</label>
-              <input type="text" name="code" id="code" required />
+              <input
+                type="text"
+                name="code"
+                id="code"
+                required
+                pattern="\d{3}"
+                title="CVV must be 3 digits"
+                required
+              />
             </div>
           </fieldset>
 

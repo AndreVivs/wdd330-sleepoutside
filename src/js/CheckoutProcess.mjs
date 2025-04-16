@@ -28,8 +28,6 @@ export default class CheckoutProcess {
     this.shipping = 0;
     this.tax = 0;
     this.orderTotal = 0;
-    // this.expiration = 0;
-    // this.code = 0;
   }
 
   init() {
@@ -37,7 +35,7 @@ export default class CheckoutProcess {
     this.list = packageItems(rawList);
     this.calculateItemSummary();
     this.calculateOrderTotal();
-    this.initFormHandler();
+    // this.initFormHandler();
   }
 
   calculateItemSummary() {
@@ -75,62 +73,60 @@ export default class CheckoutProcess {
     `;
   }
 
-  initFormHandler() {
-    const form = document.querySelector("#checkout-form");
-    const summaryContainer = document.querySelector("#order-summary");
+  // initFormHandler() {
+  //   const form = document.querySelector("#checkout-form");
+  //   const summaryContainer = document.querySelector("#order-summary");
 
-    if (form) {
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
+  //   if (form) {
+  //     form.addEventListener("submit", async (e) => {
+  //       e.preventDefault();
 
-        // Validar campos vacíos
-        const requiredFields = form.querySelectorAll("input[required]");
-        const emptyFields = Array.from(requiredFields).filter(
-          (field) => !field.value.trim(),
-        );
+  //       // Validar campos vacíos
+  //       const requiredFields = form.querySelectorAll("input[required]");
+  //       const emptyFields = Array.from(requiredFields).filter(
+  //         (field) => !field.value.trim(),
+  //       );
 
-        const itemTotal = this.itemTotal;
-        const tax = this.tax;
-        const shipping = this.shipping;
-        const orderTotal = this.orderTotal;
+  //       const itemTotal = this.itemTotal;
+  //       const tax = this.tax;
+  //       const shipping = this.shipping;
+  //       const orderTotal = this.orderTotal;
 
-        const summaryInvalid =
-          itemTotal <= 0 || tax <= 0 || shipping <= 0 || orderTotal <= 0;
+  //       const summaryInvalid =
+  //         itemTotal <= 0 || tax <= 0 || shipping <= 0 || orderTotal <= 0;
 
-        if (emptyFields.length > 0 || summaryInvalid) {
-          const messages = [];
+  //       if (emptyFields.length > 0 || summaryInvalid) {
+  //         const messages = [];
 
-          if (emptyFields.length > 0) {
-            messages.push("Please fill in all required fields.");
-          }
+  //         if (emptyFields.length > 0) {
+  //           messages.push("Please fill in all required fields.");
+  //         }
 
-          if (summaryInvalid) {
-            messages.push("Invalid order summary. Please check your cart.");
-          }
+  //         if (summaryInvalid) {
+  //           messages.push("Invalid order summary. Please check your cart.");
+  //         }
 
-          console.log("Error messages:", messages);
-          this.displayCheckoutError(messages);
-          return; // No continuar con el envío
-        }
+  //         console.log("Error messages:", messages);
+  //         this.displayCheckoutError(messages);
+  //         return; // No continuar con el envío
+  //       }
 
-        try {
-          const result = await this.checkout(form);
-          if (result) {
-            alert("Order submitted successfully!");
-
-            // limpiar carrito, formulario y resumen
-            localStorage.removeItem(this.key);
-            form.reset();
-            summaryContainer.innerHTML = "";
-            this.displayCheckoutError("");
-          }
-        } catch (error) {
-          console.error("Checkout failed:", error);
-          alert("There was a problem submitting your order.");
-        }
-      });
-    }
-  }
+  //       try {
+  //         const result = await this.checkout(form);
+  //         if (result) {
+  //           localStorage.removeItem(this.key);
+  //           form.reset();
+  //           summaryContainer.innerHTML = "";
+  //           this.displayCheckoutError("");
+  //           window.location.href = "./success.html";
+  //         }
+  //       } catch (error) {
+  //         console.error("Checkout failed:", error);
+  //         alert("There was a problem submitting your order.");
+  //       }
+  //     });
+  //   }
+  // }
 
   async checkout(form) {
     const order = formDataToJSON(form);
@@ -152,18 +148,18 @@ export default class CheckoutProcess {
       const service = new ExternalServices();
       const confirmation = await service.submitOrder(order);
       console.log("Order confirmation:", confirmation);
+      return true;
     } catch (error) {
       console.error("Error during checkout:", error);
       if (error.name === "servicesError") {
         const errorMessages = Object.values(error.message); // Extrae todos los mensajes
-        console.log("Error messages:", errorMessages);
         this.displayCheckoutError(errorMessages);
       } else {
         this.displayCheckoutError([
           "Unknown error occurred. Please try again.",
         ]);
       }
-      throw error;
+      return false;
     }
   }
 
