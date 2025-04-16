@@ -77,19 +77,53 @@ export default class CheckoutProcess {
 
   initFormHandler() {
     const form = document.querySelector("#checkout-form");
+    const summaryContainer = document.querySelector("#order-summary");
+
     if (form) {
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
+        // Validar campos vacíos
+        const requiredFields = form.querySelectorAll("input[required]");
+        const emptyFields = Array.from(requiredFields).filter(
+          (field) => !field.value.trim(),
+        );
+
+        const itemTotal = this.itemTotal;
+        const tax = this.tax;
+        const shipping = this.shipping;
+        const orderTotal = this.orderTotal;
+
+        const summaryInvalid =
+          itemTotal <= 0 || tax <= 0 || shipping <= 0 || orderTotal <= 0;
+
+        if (emptyFields.length > 0 || summaryInvalid) {
+          const messages = [];
+
+          if (emptyFields.length > 0) {
+            messages.push("Please fill in all required fields.");
+          }
+
+          if (summaryInvalid) {
+            messages.push("Invalid order summary. Please check your cart.");
+          }
+
+          console.log("Error messages:", messages);
+          this.displayCheckoutError(messages);
+          return; // No continuar con el envío
+        }
+
         try {
           const result = await this.checkout(form);
-          alert("Order submitted successfully!");
+          if (result) {
+            alert("Order submitted successfully!");
 
-          // limpiar carrito y formulario
-          localStorage.removeItem(this.key);
-          form.reset();
-          document.querySelector("#order-summary").innerHTML =
-            "<p>Thank you for your purchase!</p>";
+            // limpiar carrito, formulario y resumen
+            localStorage.removeItem(this.key);
+            form.reset();
+            summaryContainer.innerHTML = "";
+            this.displayCheckoutError("");
+          }
         } catch (error) {
           console.error("Checkout failed:", error);
           alert("There was a problem submitting your order.");
