@@ -435,3 +435,29 @@ a {
   cursor: pointer;
   color: black;
 }
+
+.wishlist-btn {
+  background-color: transparent;
+  border: 1px solid #ff69b4;
+  color: #ff69b4;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 1rem;
+}
+.wishlist-btn:hover {
+  background-color: #ff69b4;
+  color: white;
+}
+
+.wishlist-btn.active {
+  background-color: #eee;
+  color: green;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+.wishlist-container {
+  margin: 15px;
+  margin-left: 70%;
+}

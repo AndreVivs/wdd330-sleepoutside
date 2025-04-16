@@ -37,12 +37,6 @@ export function renderListWithTemplate(
   clear = false,
 ) {
   const htmlStrings = list.map(template);
-
-  // if (!parentElement) {
-  //   console.error("Parent element is not defined!");
-  //   return;
-  // }
-  // Clear the contents if needed
   if (clear) {
     parentElement.innerHTML = "";
   }
